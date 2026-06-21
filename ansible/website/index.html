@@ -1,40 +1,121 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>KVS IAC Project</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KVS IAC Project - Version 3</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e3a8a, #06b6d4);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            background: white;
+            width: 800px;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0px 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        h1 {
+            color: #2563eb;
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .version {
+            background: #22c55e;
+            color: white;
+            display: inline-block;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        p {
+            font-size: 20px;
+            color: #444;
+            margin: 10px 0;
+        }
+
+        ul {
+            list-style: none;
+            margin-top: 25px;
+        }
+
+        ul li {
+            background: #eff6ff;
+            margin: 10px;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 18px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            color: #dc2626;
+            font-weight: bold;
+            font-size: 22px;
+        }
+
+    </style>
+
 </head>
 <body>
 
-    <div class="container">
-        <h1>KVS IAC Project</h1>
+<div class="card">
 
-        <h2>Version 2</h2>
+    <h1>🚀 KVS IAC PROJECT</h1>
 
-        <p>
-            Golden AMI created using:
-        </p>
-
-        <ul>
-            <li>Amazon Linux 2023</li>
-            <li>Ansible</li>
-            <li>Packer</li>
-            <li>Jenkins</li>
-            <li>Auto Scaling Group</li>
-            <li>Application Load Balancer</li>
-        </ul>
-
-        <p>
-            Build Date: 21-Jun-2026
-        </p>
-
-        <p>
-            AMI Rotation Validation Test
-        </p>
-
+    <div class="version">
+        VERSION 3
     </div>
 
-    <script src="app.js"></script>
+    <p>
+        Golden AMI Rotation Demo
+    </p>
+
+    <p>
+        AWS Account: 350025135544
+    </p>
+
+    <p>
+        Region: ap-southeast-1
+    </p>
+
+    <ul>
+        <li>✅ Jenkins</li>
+        <li>✅ GitHub</li>
+        <li>✅ Ansible</li>
+        <li>✅ Packer</li>
+        <li>✅ Golden AMI</li>
+        <li>✅ Launch Template</li>
+        <li>✅ Auto Scaling Group</li>
+        <li>✅ Application Load Balancer</li>
+        <li>✅ AWS Systems Manager</li>
+    </ul>
+
+    <div class="footer">
+        🎯 Version 3 - AMI Rotation Validation
+    </div>
+
+</div>
 
 </body>
 </html>
