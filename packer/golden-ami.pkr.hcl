@@ -41,6 +41,7 @@ source "amazon-ebs" "golden" {
       name                = "al2023-ami-2023*"
       root-device-type    = "ebs"
       virtualization-type = "hvm"
+      architecture        = "x86_64"
     }
 
     owners = ["137112412989"]
@@ -62,7 +63,13 @@ build {
   ]
 
   provisioner "ansible" {
+
     playbook_file = "../ansible/playbook.yml"
+
+    extra_arguments = [
+      "-e",
+      "ansible_scp_if_ssh=False"
+    ]
   }
 
 }
