@@ -62,14 +62,15 @@ build {
     "source.amazon-ebs.golden"
   ]
 
-  provisioner "ansible" {
-
-    playbook_file = "../ansible/playbook.yml"
-
-    extra_arguments = [
-      "-e",
-      "ansible_scp_if_ssh=False"
+  provisioner "shell" {
+    inline = [
+      "sudo dnf install -y ansible-core"
     ]
+  }
+
+  provisioner "ansible-local" {
+    playbook_file = "../ansible/playbook.yml"
+    playbook_dir  = "../ansible"
   }
 
 }

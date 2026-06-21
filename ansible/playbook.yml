@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- hosts: localhost
+  connection: local
   become: true
 
   tasks:
@@ -24,7 +25,7 @@
         name: java-17-amazon-corretto
         state: present
 
-    - name: Enable Apache Service
+    - name: Enable and Start Apache
       service:
         name: httpd
         state: started
@@ -34,6 +35,9 @@
       file:
         path: /var/www/html
         state: directory
+        owner: root
+        group: root
+        mode: '0755'
 
     - name: Copy website files
       copy:
@@ -43,14 +47,14 @@
         group: root
         mode: '0644'
 
-    - name: Create project information page
+    - name: Create project info page
       copy:
         dest: /var/www/html/info.html
         content: |
           <!DOCTYPE html>
           <html>
           <head>
-              <title>KVS Golden AMI Info</title>
+              <title>KVS Golden AMI Project</title>
           </head>
           <body>
               <h1>KVS Golden AMI Project</h1>
@@ -63,7 +67,7 @@
                   <li>Amazon Linux 2023</li>
                   <li>Auto Scaling Group</li>
               </ul>
-              <p>This page was deployed during Golden AMI creation.</p>
+              <p>Golden AMI created automatically using Jenkins Pipeline.</p>
           </body>
           </html>
 
