@@ -22,7 +22,7 @@ source "amazon-ebs" "golden" {
 
   ssh_username = "ec2-user"
 
-  ami_name = "kvs-iac-golden-ami-{{timestamp}}"
+  ami_name = "kvs-iac-golden-ami-V-1.0{{timestamp}}"
 
   tags = {
     Name        = "kvs-iac-golden-ami"
