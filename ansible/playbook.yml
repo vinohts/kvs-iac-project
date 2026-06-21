@@ -1,0 +1,73 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+
+    - name: Update all packages
+      dnf:
+        name: "*"
+        state: latest
+
+    - name: Install Apache
+      dnf:
+        name: httpd
+        state: present
+
+    - name: Install Git
+      dnf:
+        name: git
+        state: present
+
+    - name: Install Java 17
+      dnf:
+        name: java-17-amazon-corretto
+        state: present
+
+    - name: Enable Apache Service
+      service:
+        name: httpd
+        state: started
+        enabled: true
+
+    - name: Create website directory
+      file:
+        path: /var/www/html
+        state: directory
+
+    - name: Copy website files
+      copy:
+        src: website/
+        dest: /var/www/html/
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Create project information page
+      copy:
+        dest: /var/www/html/info.html
+        content: |
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <title>KVS Golden AMI Info</title>
+          </head>
+          <body>
+              <h1>KVS Golden AMI Project</h1>
+              <h2>Built Using</h2>
+              <ul>
+                  <li>GitHub</li>
+                  <li>Jenkins</li>
+                  <li>Ansible</li>
+                  <li>Packer</li>
+                  <li>Amazon Linux 2023</li>
+                  <li>Auto Scaling Group</li>
+              </ul>
+              <p>This page was deployed during Golden AMI creation.</p>
+          </body>
+          </html>
+
+    - name: Restart Apache
+      service:
+        name: httpd
+        state: restarted
