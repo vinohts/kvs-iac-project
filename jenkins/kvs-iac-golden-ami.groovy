@@ -6,11 +6,6 @@ pipeline {
         timestamps()
     }
 
-    environment {
-        PROJECT_DIR = "/mnt/d/kvs-iac-project"
-        PACKER_DIR  = "/mnt/d/kvs-iac-project/packer"
-    }
-
     stages {
 
         stage('Checkout Source') {
@@ -34,7 +29,7 @@ pipeline {
         stage('Packer Init') {
             steps {
                 bat '''
-                wsl bash -c "cd ${PACKER_DIR} && packer init ."
+                wsl bash -c "cd /mnt/d/kvs-iac-project/packer && packer init ."
                 '''
             }
         }
@@ -42,7 +37,7 @@ pipeline {
         stage('Packer Validate') {
             steps {
                 bat '''
-                wsl bash -c "cd ${PACKER_DIR} && packer validate ."
+                wsl bash -c "cd /mnt/d/kvs-iac-project/packer && packer validate ."
                 '''
             }
         }
@@ -50,7 +45,7 @@ pipeline {
         stage('Build Golden AMI') {
             steps {
                 bat '''
-                wsl bash -c "cd ${PACKER_DIR} && packer build -color=false ."
+                wsl bash -c "cd /mnt/d/kvs-iac-project/packer && packer build -color=false ."
                 '''
             }
         }
