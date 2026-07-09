@@ -1,788 +1,746 @@
-# KVS IAC Project – Detailed Summary (Phase 1 to Phase 3)
+Absolutely. I think this project has grown beyond a collection of notes. It's now a **complete DevOps/IaC portfolio project**, and it deserves professional documentation.
 
-**Project Name:** kvs-iac-project
-**AWS Account:** 350025135544
+Considering everything we've built together, I recommend organizing it like a real implementation guide rather than just phase notes.
+
+---
+
+# KVS Infrastructure as Code (IaC) Project
+
+## Complete Project Documentation
+
+**Version:** 1.0
+
+**Author:** Vinoth Kumar
+
+**Cloud Provider:** Amazon Web Services (AWS)
+
 **Region:** ap-southeast-1
-**Repository:** `https://github.com/vinohts/kvs-iac-project`
+
+**Project Type:** Infrastructure as Code (IaC)
+
+**Automation Tools:**
+
+* Packer
+* Ansible
+* Jenkins
+* GitHub
+* AWS CLI
+* WSL Ubuntu
 
 ---
 
-# Phase 1 – Environment Preparation
+# Table of Contents
 
-## Objective
+## Chapter 1 – Project Overview
 
-Prepare local workstation and tools required for Infrastructure Automation practice.
+1. Introduction
+2. Business Problem
+3. Project Objectives
+4. Solution Overview
+5. Project Scope
 
 ---
 
-## Local Environment
+## Chapter 2 – Solution Architecture
 
-### Windows 11 Laptop
+* High Level Architecture
+* Infrastructure Components
+* End-to-End Workflow
+* Technology Stack
 
-Installed and configured:
+Architecture Diagram
 
+```text
+Developer
+      │
+      ▼
+GitHub Repository
+      │
+      ▼
+Jenkins Pipeline (SCM)
+      │
+      ▼
+WSL Ubuntu
+      │
+      ▼
+Packer
+      │
+      ▼
+Temporary EC2
+      │
+      ▼
+Ansible Local
+      │
+      ▼
+Golden AMI
+      │
+      ▼
+Launch Template
+      │
+      ▼
+Auto Scaling Group
+      │
+      ▼
+Application Load Balancer
+      │
+      ▼
+End Users
+```
+
+---
+
+# Chapter 3 – Local Environment Setup
+
+## Windows Machine
+
+* Windows 11
+* Git
 * Jenkins
 * WSL Ubuntu
+
+## WSL Packages
+
 * AWS CLI
 * Git
 * Packer
 * Ansible
+* Python
+* SSH
 
 ---
 
-## AWS Infrastructure Already Available
+# Chapter 4 – AWS Environment
 
-### VPC
+## AWS Account
 
-| Resource | ID                    |
-| -------- | --------------------- |
-| VPC      | vpc-0373e053c8ddb2bb3 |
+```
+350025135544
+```
 
----
+## Region
 
-### Public Subnets
-
-| Name     | Subnet ID                |
-| -------- | ------------------------ |
-| Public-A | subnet-088cee33520533800 |
-| Public-B | subnet-0c4cd667cae1ac8cb |
-| Public-C | subnet-039830bde83c2fd96 |
+```
+ap-southeast-1
+```
 
 ---
 
-### Internet Gateway
+## Networking
 
-| Resource | ID                    |
-| -------- | --------------------- |
-| IGW      | igw-0ac47a3b0eb2aeaa6 |
+VPC
+
+```
+vpc-0373e053c8ddb2bb3
+```
+
+Public Subnets
+
+```
+subnet-088cee33520533800
+
+subnet-039830bde83c2fd96
+
+subnet-0c4cd667cae1ac8cb
+```
+
+Internet Gateway
+
+```
+igw-0ac47a3b0eb2aeaa6
+```
+
+Route Table
+
+```
+rtb-0fa06ba82fd8041b9
+```
 
 ---
 
-### Route Table
+# Chapter 5 – IAM Configuration
 
-| Resource    | ID                    |
-| ----------- | --------------------- |
-| Route Table | rtb-0fa06ba82fd8041b9 |
+IAM User
 
----
-
-### IAM
-
-User:
-
-```text
+```
 kvsadmin
 ```
 
-Permission:
+Permissions
 
-```text
+```
 AdministratorAccess
 ```
 
 ---
 
-### EC2 Role
+IAM Role
 
-Role:
-
-```text
+```
 EC2SSMRole
 ```
 
-Policy:
+Attached Policy
 
-```text
+```
 AmazonSSMManagedInstanceCore
 ```
 
----
+Purpose
 
-# Phase 2 – Build Golden AMI using Packer + Ansible
-
-## Objective
-
-Create reusable Golden AMI containing:
-
-* Amazon Linux 2023
-* Apache
-* Git
-* Java 17
-* Custom Web Application
+Allow EC2 instances to register with AWS Systems Manager.
 
 ---
 
-# Repository Structure
+# Chapter 6 – Repository Structure
 
-```text
+```
 kvs-iac-project
 │
 ├── ansible
 │   ├── playbook.yml
+│   ├── inventory.ini
 │   └── website
 │       ├── index.html
 │       ├── style.css
 │       └── app.js
 │
 ├── packer
-│   └── golden-ami.pkr.hcl
+│   ├── golden-ami.pkr.hcl
+│   └── variables.pkr.hcl
 │
 ├── jenkins
-│   └── Jenkinsfile
+│   └── kvs-iac-golden-ami.groovy
 │
-└── docs
+├── scripts
+│   ├── ami_rotation.sh
+│   ├── update_lt.sh
+│   └── start_refresh.sh
+│
+├── docs
+│
+└── README.md
 ```
 
 ---
 
-# Ansible Playbook Created
+# Chapter 7 – GitHub Integration
 
-File:
+Repository
 
-```text
-ansible/playbook.yml
+```
+https://github.com/vinohts/kvs-iac-project
 ```
 
-Tasks:
+Repository Organization
 
-### Update Packages
-
-```yaml
-dnf update
-```
+* Source Code
+* Infrastructure Code
+* Jenkins Pipeline
+* Documentation
 
 ---
 
-### Install Apache
+# Chapter 8 – Packer
 
-```yaml
-httpd
+Objectives
+
+* Create reusable AMIs
+* Standardize server builds
+* Eliminate manual installation
+
+Builder
+
 ```
-
----
-
-### Install Git
-
-```yaml
-git
-```
-
----
-
-### Install Java
-
-```yaml
-java-17-amazon-corretto
-```
-
----
-
-### Enable Apache
-
-```yaml
-systemctl enable httpd
-systemctl start httpd
-```
-
----
-
-### Deploy Website
-
-Copies:
-
-```text
-index.html
-style.css
-app.js
-```
-
-to
-
-```text
-/var/www/html
-```
-
----
-
-### Restart Apache
-
-```yaml
-service:
-  name: httpd
-  state: restarted
-```
-
----
-
-# Website Version 1
-
-Created a simple webpage displaying:
-
-```text
-KVS IAC Project
-Golden AMI Version 1
-Apache + Git + Java
-```
-
----
-
-# Packer Configuration
-
-File:
-
-```text
-packer/golden-ami.pkr.hcl
-```
-
-Builder:
-
-```hcl
 amazon-ebs
 ```
 
-Base Image:
+Base Image
 
-```text
+```
 Amazon Linux 2023
 ```
 
----
+Provisioner
 
-Instance Type:
-
-```text
-t3.small
 ```
-
-Subnet:
-
-```text
-subnet-088cee33520533800
+ansible-local
 ```
-
-IAM Profile:
-
-```text
-EC2SSMRole
-```
-
----
 
 AMI Naming
 
-```text
+```
 kvs-iac-golden-ami-<timestamp>
 ```
 
-Example:
+---
 
-```text
-kvs-iac-golden-ami-1782053072
+# Chapter 9 – Ansible
+
+Playbook
+
+```
+ansible/playbook.yml
+```
+
+Tasks
+
+* Update Packages
+* Install Apache
+* Install Git
+* Install Java
+* Enable Apache
+* Deploy Website
+* Restart Apache
+
+---
+
+# Chapter 10 – Website Versions
+
+## Version 1
+
+Basic HTML page
+
+---
+
+## Version 2
+
+Improved UI
+
+---
+
+## Version 3
+
+Modern colorful responsive webpage
+
+Each version generated a new Golden AMI.
+
+---
+
+# Chapter 11 – Jenkins
+
+Pipeline Type
+
+```
+Pipeline Script from SCM
+```
+
+Repository
+
+GitHub
+
+Pipeline Script
+
+```
+jenkins/kvs-iac-golden-ami.groovy
 ```
 
 ---
 
-# Challenges Encountered
+Pipeline Stages
 
-## Problem 1
-
-```text
-Unknown provisioner type "ansible"
 ```
+Checkout Source
 
-Reason:
+↓
 
-```text
-Packer Ansible plugin missing
-```
+Verify Environment
 
-Resolution:
+↓
 
-```bash
-packer init .
-```
-
-Plugin installed successfully.
-
----
-
-## Problem 2
-
-```text
-ansible-playbook executable not found
-```
-
-Reason:
-
-```text
-Packer running in Windows
-Ansible installed in WSL
-```
-
-Resolution:
-
-Moved build execution into WSL.
-
----
-
-## Problem 3
-
-```text
-scp/sftp connection failures
-```
-
-Error:
-
-```text
-/ usr/lib/sftp-server not found
-```
-
-Reason:
-
-Amazon Linux 2023 + ansible provisioner compatibility issue.
-
----
-
-Resolution
-
-Switched from:
-
-```hcl
-provisioner "ansible"
-```
-
-to
-
-```hcl
-provisioner "ansible-local"
-```
-
-and installed Ansible inside build instance.
-
----
-
-# Jenkins Integration
-
-## Objective
-
-Automate Golden AMI creation.
-
----
-
-### WSL Validation Pipeline
-
-Verified Jenkins can execute WSL commands.
-
-Output:
-
-```bash
-hostname
-whoami
-pwd
-```
-
-Success.
-
----
-
-### AWS Validation
-
-Executed:
-
-```bash
-aws sts get-caller-identity
-```
-
-Verified:
-
-```text
-Account:
-350025135544
-```
-
----
-
-# Jenkins Pipeline Created
-
-Stages:
-
-```text
 Packer Init
+
+↓
+
 Packer Validate
+
+↓
+
 Build Golden AMI
 ```
 
-Commands:
+---
 
-```bash
-wsl bash -c "cd /mnt/d/kvs-iac-project/packer && packer init ."
+Verification
 
-wsl bash -c "cd /mnt/d/kvs-iac-project/packer && packer validate ."
+```
+hostname
 
-wsl bash -c "cd /mnt/d/kvs-iac-project/packer && packer build ."
+whoami
+
+aws sts get-caller-identity
+
+packer version
+
+ansible-playbook --version
 ```
 
 ---
 
-# Golden AMI Successfully Created
+# Chapter 12 – Golden AMI
 
-Final AMI:
+Build Process
 
-```text
-ami-0ca8140b8f5fbf942
+```
+GitHub
+
+↓
+
+Jenkins
+
+↓
+
+WSL
+
+↓
+
+Packer
+
+↓
+
+Temporary EC2
+
+↓
+
+Ansible Local
+
+↓
+
+Golden AMI
 ```
 
-Validation:
+Validation
 
-Launched EC2 manually.
+Created EC2 manually
 
-Verified:
+Verified
 
-```bash
-systemctl status httpd
-```
-
-Success.
+* Apache
+* Git
+* Java
+* Website
+* SSM
 
 ---
 
-Opened Browser:
+# Chapter 13 – Launch Template
 
-```text
-http://<Public-IP>
-```
+Configuration
 
-Website loaded successfully.
-
----
-
-# Phase 3 – Launch Template & Auto Scaling Group
-
-## Objective
-
-Deploy Golden AMI through Auto Scaling.
+* Golden AMI
+* t3.micro
+* Security Group
+* IAM Role
+* Public IP Enabled
 
 ---
 
-# Launch Template Created
+# Chapter 14 – Auto Scaling Group
 
-Name:
+Configuration
 
-```text
-kvs-iac-project-lt
 ```
+Min = 2
 
-AMI:
-
-```text
-ami-0ca8140b8f5fbf942
-```
-
-Instance Type:
-
-```text
-t3.micro
-```
-
-IAM Role:
-
-```text
-EC2SSMRole
-```
-
-Network:
-
-```text
-Auto Assign Public IP = Enabled
-```
-
-Security Group:
-
-```text
-HTTP 80
-SSH 22
-```
-
----
-
-# Auto Scaling Group Created
-
-Name:
-
-```text
-kvs-iac-project-asg
-```
-
-Subnets:
-
-```text
-subnet-088cee33520533800
-subnet-0c4cd667cae1ac8cb
-subnet-039830bde83c2fd96
-```
-
----
-
-Capacity:
-
-```text
-Min     = 2
 Desired = 2
-Max     = 2
+
+Max = 2
 ```
 
-Purpose:
+Subnets
 
-```text
-Maintain exactly 2 instances
-```
+3 Public Subnets
+
+Purpose
+
+Maintain two healthy web servers.
 
 ---
 
-# ALB Created
+# Chapter 15 – Application Load Balancer
 
-Name:
+Created
 
-```text
+```
 kvs-iac-project-alb
 ```
 
-Type:
+Target Group
 
-```text
-Internet Facing
+```
+kvs-iac-project-tg
+```
+
+Health Check
+
+```
+/
+```
+
+Validated
+
+* Healthy Targets
+* Traffic Distribution
+
+---
+
+# Chapter 16 – AWS Systems Manager
+
+Role
+
+```
+EC2SSMRole
+```
+
+Issue
+
+```
+Offline
+```
+
+Investigation
+
+* IAM
+* Agent
+* Logs
+* Route Table
+* Security Group
+
+Root Cause
+
+Outbound Security Group blocked HTTPS.
+
+Solution
+
+```
+Outbound
+
+All Traffic
+
+0.0.0.0/0
+```
+
+Result
+
+```
+SSM Online
 ```
 
 ---
 
-# Target Group Created
+# Chapter 17 – Troubleshooting
 
-Name:
+### Packer Plugin Missing
 
-```text
-kvs-iac-project-tg
+Resolution
+
+```
+packer init
 ```
 
-Protocol:
+---
 
-```text
-HTTP
+### Missing Build Block
+
+Fixed HCL.
+
+---
+
+### SCP Failure
+
+```
+/usr/lib/sftp-server
 ```
 
-Port:
+Solution
 
-```text
-80
+```
+ansible-local
 ```
 
-Health Check Path:
+---
 
-```text
+### Jenkins WSL
+
+Corrected
+
+```
+wsl bash -c
+```
+
+---
+
+### ALB Health Check
+
+Corrected
+
+```
 /
 ```
 
 ---
 
-# Issue Encountered – Target Unhealthy
+### SSM Offline
 
-Reason:
+Corrected outbound rules.
 
-Instances not reachable.
+---
 
-Investigation:
+### Mixed Instance Issue
 
-```text
-Health checks timing out
+AWS launched
+
+```
+c7i-flex.large
+```
+
+Reason
+
+Mixed Instance Policy
+
+Solution
+
+Launch Template Only
+
+---
+
+# Chapter 18 – Lessons Learned
+
+* Infrastructure as Code fundamentals
+* Immutable infrastructure with Golden AMIs
+* Configuration management using Ansible
+* CI/CD with Jenkins
+* GitHub SCM integration
+* WSL automation on Windows
+* IAM role design
+* SSM troubleshooting
+* ALB health checks
+* Auto Scaling Group behavior
+* Launch Template versioning
+* Importance of Security Group egress rules
+* Difference between Launch Templates and Mixed Instances Policies
+
+---
+
+# Chapter 19 – Skills Gained
+
+* AWS EC2
+* IAM
+* VPC
+* Route Tables
+* Security Groups
+* Systems Manager
+* Packer
+* Ansible
+* Git
+* GitHub
+* Jenkins
+* Groovy Pipelines
+* WSL
+* Launch Templates
+* Auto Scaling Groups
+* Application Load Balancers
+* Golden AMI creation
+* Infrastructure troubleshooting
+
+---
+
+# Chapter 20 – Final Architecture
+
+```
+GitHub
+      │
+      ▼
+Jenkins Pipeline
+      │
+      ▼
+WSL Ubuntu
+      │
+      ▼
+Packer
+      │
+      ▼
+Temporary EC2
+      │
+      ▼
+Ansible Local
+      │
+      ▼
+Golden AMI
+      │
+      ▼
+Launch Template
+      │
+      ▼
+Auto Scaling Group
+      │
+      ▼
+Application Load Balancer
+      │
+      ▼
+Users
 ```
 
 ---
 
-# Issue Encountered – SSM Offline
+# Chapter 21 – Current Project Status
 
-Agent running:
-
-```bash
-systemctl status amazon-ssm-agent
-```
-
-But logs showed:
-
-```text
-dial tcp ssm.ap-southeast-1.amazonaws.com:443
-i/o timeout
-```
-
----
-
-Root Cause
-
-Outbound Security Group rules blocked internet access.
-
----
-
-Fix
-
-Allowed:
-
-```text
-Outbound
-All Traffic
-0.0.0.0/0
-```
+| Component                 | Status      |
+| ------------------------- | ----------- |
+| GitHub Repository         | ✅ Completed |
+| Jenkins Pipeline from SCM | ✅ Completed |
+| WSL Integration           | ✅ Completed |
+| AWS CLI                   | ✅ Completed |
+| Packer                    | ✅ Completed |
+| Ansible                   | ✅ Completed |
+| Golden AMI                | ✅ Completed |
+| Website Versioning        | ✅ Completed |
+| Launch Template           | ✅ Completed |
+| Auto Scaling Group        | ✅ Completed |
+| Application Load Balancer | ✅ Completed |
+| Target Group              | ✅ Completed |
+| Systems Manager           | ✅ Completed |
+| Health Checks             | ✅ Completed |
+| Troubleshooting           | ✅ Completed |
 
 ---
 
-After Fix
+# Phase 2 Roadmap
 
-Verified:
+The next phase of the project will build on this foundation by introducing an event-driven processing workflow:
 
-```bash
-curl https://ssm.ap-southeast-1.amazonaws.com
+```
+User
+    │
+    ▼
+Web UI
+    │
+    ▼
+Database
+(Status = QUEUED)
+    │
+    ▼
+EventBridge
+    │
+    ▼
+Lambda
+    │
+    ▼
+Auto Scaling Group
+    │
+    ▼
+EC2 Worker Instances
+    │
+    ▼
+Process Jobs
+    │
+    ▼
+Update Database
+(Status = COMPLETED)
+    │
+    ▼
+Lambda detects empty queue
+    │
+    ▼
+Scale ASG to Zero
 ```
 
-Success.
-
----
-
-SSM Status:
-
-```text
-Online
-```
-
----
-
-Target Group:
-
-```text
-Healthy
-```
-
----
-
-ALB:
-
-```text
-Working
-```
-
----
-
-# Mixed Instance Issue Learned
-
-Observed:
-
-```text
-ASG launching c7i-flex.large
-```
-
-instead of
-
-```text
-t3.micro
-```
-
-Reason:
-
-ASG created using:
-
-```text
-Mixed Instances Policy
-```
-
-with
-
-```text
-Instance Requirements
-```
-
-enabled.
-
-AWS automatically selected cheapest matching instance.
-
----
-
-Resolution
-
-Create ASG using:
-
-```text
-Launch Template only
-```
-
-Disable:
-
-```text
-Mixed Instances Policy
-```
-
-No Instance Requirements.
-
----
-
-Expected Result
-
-ASG launches exactly:
-
-```text
-t3.micro
-```
-
-or
-
-```text
-t3.small
-```
-
-as specified in Launch Template.
-
----
-
-# Current Project Status
-
-✅ GitHub Repository Created
-
-✅ Jenkins Working
-
-✅ WSL Working
-
-✅ AWS CLI Working
-
-✅ Packer Working
-
-✅ Ansible Working
-
-✅ Golden AMI Created
-
-✅ Website Deployed
-
-✅ Launch Template Tested
-
-✅ Auto Scaling Tested
-
-✅ ALB Tested
-
-✅ Target Group Tested
-
-✅ SSM Working
-
-✅ Learned Mixed Instance Behavior
-
-✅ Cleaned up ALB, TG and ASG to avoid costs
-
----
-
-## Next Phase (Phase 4)
-
-We can continue with:
-
-1. Create clean Launch Template (fixed instance type)
-2. Create clean ASG
-3. Create Version 2 / Version 3 colorful website
-4. Build New Golden AMI
-5. Launch Template Versioning
-6. AMI Rotation Automation
-7. Jenkins Pipeline for ASG Refresh
-8. Fully Automated Golden AMI Rotation Project
-
-This will complete the end-to-end Golden AMI + ASG rotation practice project.
