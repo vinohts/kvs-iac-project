@@ -1,0 +1,20 @@
+[Unit]
+Description=KVS Infrastructure Automation Worker
+After=network.target
+
+[Service]
+Type=simple
+
+User=root
+WorkingDirectory=/opt/kvs-worker
+
+ExecStart=/usr/bin/python3 /opt/kvs-worker/worker.py
+
+Restart=always
+RestartSec=5
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
