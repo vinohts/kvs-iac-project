@@ -2,6 +2,20 @@ pipeline {
 
     agent any
 
+    parameters {
+
+        gitParameter(
+            name: 'BRANCH',
+            type: 'PT_BRANCH',
+            defaultValue: 'main',
+            branchFilter: 'origin/(.*)',
+            selectedValue: 'DEFAULT',
+            sortMode: 'ASCENDING_SMART',
+            description: 'Select Git Branch to Build'
+        )
+
+    }
+
     options {
         timestamps()
     }
@@ -13,7 +27,13 @@ pipeline {
          **********************************************************************/
         stage('Checkout Source') {
             steps {
-                checkout scm
+
+                git(
+                    branch: params.BRANCH,
+                    credentialsId: 'github',
+                    url: 'https://github.com/vinohts/kvs-iac-project.git'
+                )
+
             }
         }
 
@@ -26,6 +46,8 @@ pipeline {
                 echo =====================================================
                 echo Verifying Build Environment
                 echo =====================================================
+
+                echo Selected Branch : %BRANCH%
 
                 wsl hostname
                 wsl whoami
@@ -75,6 +97,7 @@ pipeline {
                 echo =====================================================
                 echo Building Golden AMI
                 echo Jenkins Build Number : %BUILD_NUMBER%
+                echo Selected Branch      : %BRANCH%
                 echo =====================================================
 
                 wsl bash -c "cd /mnt/d/kvs-iac-project/packer && packer build -var 'build_number=%BUILD_NUMBER%' -color=false ."
@@ -117,29 +140,37 @@ pipeline {
     post {
 
         success {
+
             echo '====================================================='
             echo 'KVS Infrastructure Automation Pipeline'
             echo '====================================================='
+            echo "Git Branch           : ${params.BRANCH}"
             echo "Jenkins Build Number : ${env.BUILD_NUMBER}"
             echo 'Golden AMI Created Successfully'
             echo 'Launch Template Updated'
             echo 'Auto Scaling Group Refresh Started'
             echo 'Pipeline Completed Successfully'
             echo '====================================================='
+
         }
 
         failure {
+
             echo '====================================================='
             echo 'KVS Infrastructure Automation Pipeline'
             echo '====================================================='
+            echo "Git Branch           : ${params.BRANCH}"
             echo "Jenkins Build Number : ${env.BUILD_NUMBER}"
             echo 'Pipeline Execution Failed'
             echo 'Review Jenkins Console Output'
             echo '====================================================='
+
         }
 
         always {
             cleanWs()
         }
+
     }
+
 }
