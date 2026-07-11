@@ -11,7 +11,7 @@
 # • Runs as a systemd service
 # • Polls Amazon SQS
 # • Receives Jobs
-# • Processes Jobs
+# • Executes Jobs
 # • Deletes Completed Jobs
 # • Writes Heartbeats
 ###############################################################################
@@ -84,6 +84,51 @@ AZ = metadata("placement/availability-zone")
 PUBLIC_IP = metadata("public-ipv4")
 
 ###############################################################################
+# Job Functions
+###############################################################################
+
+def find_public_ip():
+
+    ip = metadata("public-ipv4")
+
+    logging.info("------------------------------------------------------")
+    logging.info("JOB : FindPublicIP")
+    logging.info("Public IP : %s", ip)
+    logging.info("------------------------------------------------------")
+
+
+def system_health_check():
+
+    logging.info("------------------------------------------------------")
+    logging.info("JOB : SystemHealthCheck")
+    logging.info("System Health Check Completed")
+    logging.info("------------------------------------------------------")
+
+
+def restart_apache():
+
+    logging.info("------------------------------------------------------")
+    logging.info("JOB : RestartApache")
+    logging.info("Apache Restart Requested")
+    logging.info("------------------------------------------------------")
+
+
+def install_package(package):
+
+    logging.info("------------------------------------------------------")
+    logging.info("JOB : InstallPackage")
+    logging.info("Requested Package : %s", package)
+    logging.info("------------------------------------------------------")
+
+
+def create_website_backup():
+
+    logging.info("------------------------------------------------------")
+    logging.info("JOB : CreateWebsiteBackup")
+    logging.info("Website Backup Completed")
+    logging.info("------------------------------------------------------")
+
+###############################################################################
 # Startup Banner
 ###############################################################################
 
@@ -132,26 +177,55 @@ while True:
 
             continue
 
+        #######################################################################
+        # Read Message
+        #######################################################################
+
         message = messages[0]
 
-        body = message["Body"]
+        body = json.loads(message["Body"])
 
         receipt = message["ReceiptHandle"]
 
         message_id = message["MessageId"]
 
+        job = body.get("job")
+
         logging.info("------------------------------------------------------")
         logging.info("JOB RECEIVED")
         logging.info("Message ID : %s", message_id)
-        logging.info("Payload    : %s", body)
+        logging.info("Payload    : %s", json.dumps(body))
+        logging.info("------------------------------------------------------")
 
         #######################################################################
-        # Future Processing Logic
+        # Execute Job
         #######################################################################
 
-        logging.info("Processing Job...")
+        if job == "FindPublicIP":
 
-        time.sleep(3)
+            find_public_ip()
+
+        elif job == "SystemHealthCheck":
+
+            system_health_check()
+
+        elif job == "RestartApache":
+
+            restart_apache()
+
+        elif job == "InstallPackage":
+
+            package = body.get("package", "Unknown")
+
+            install_package(package)
+
+        elif job == "CreateWebsiteBackup":
+
+            create_website_backup()
+
+        else:
+
+            logging.warning("Unknown Job : %s", job)
 
         logging.info("Job Completed Successfully")
 
