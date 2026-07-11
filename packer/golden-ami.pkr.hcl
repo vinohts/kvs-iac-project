@@ -100,9 +100,9 @@ source "amazon-ebs" "golden" {
 
   run_tags = {
 
-    Name          = "packer-build-instance"
-    Project       = "kvs-iac-project"
-    BuildNumber   = var.build_number
+    Name        = "packer-build-instance"
+    Project     = "kvs-iac-project"
+    BuildNumber = var.build_number
 
   }
 
