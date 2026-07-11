@@ -1,16 +1,44 @@
+# `ansible/playbook.yml`
+
+```yaml
 ---
+###############################################################################
+# KVS Infrastructure Automation Project
+#
+# Playbook Name : Golden AMI Configuration
+# Purpose       : Configure Amazon Linux 2023 as a reusable Golden AMI
+# Author        : Vinoth Kumar
+#
+# Components Installed
+# --------------------
+# - Apache HTTP Server
+# - Git
+# - Java 17 (Amazon Corretto)
+# - Python 3
+# - Enterprise Dashboard Website
+# - KVS Worker Service
+###############################################################################
+
 - hosts: localhost
   connection: local
   become: true
 
   tasks:
 
-    - name: Update all packages
+###############################################################################
+# SECTION 1 - Operating System Updates
+###############################################################################
+
+    - name: Update all installed packages
       dnf:
         name: "*"
         state: latest
 
-    - name: Install Apache
+###############################################################################
+# SECTION 2 - Install Required Software
+###############################################################################
+
+    - name: Install Apache HTTP Server
       dnf:
         name: httpd
         state: present
@@ -20,24 +48,37 @@
         name: git
         state: present
 
-    - name: Install Java 17
+    - name: Install Java 17 Amazon Corretto
       dnf:
         name: java-17-amazon-corretto
         state: present
 
-    - name: Enable and Start Apache
+    - name: Install Python 3
+      dnf:
+        name: python3
+        state: present
+
+###############################################################################
+# SECTION 3 - Configure Apache
+###############################################################################
+
+    - name: Enable Apache service
       service:
         name: httpd
-        state: started
         enabled: true
+        state: started
 
-    - name: Create website directory
+###############################################################################
+# SECTION 4 - Deploy Enterprise Dashboard
+###############################################################################
+
+    - name: Create Apache web root
       file:
         path: /var/www/html
         state: directory
         owner: root
         group: root
-        mode: '0755'
+        mode: "0755"
 
     - name: Copy website files
       copy:
@@ -45,33 +86,77 @@
         dest: /var/www/html/
         owner: root
         group: root
-        mode: '0644'
+        mode: "0644"
 
-    - name: Create project info page
+    - name: Create Project Information Page
       copy:
         dest: /var/www/html/info.html
         content: |
           <!DOCTYPE html>
           <html>
           <head>
-              <title>KVS Golden AMI Project</title>
+              <title>KVS Infrastructure Automation</title>
           </head>
           <body>
-              <h1>KVS Golden AMI Project</h1>
-              <h2>Built Using</h2>
+              <h1>KVS Infrastructure Automation Project</h1>
+
+              <h2>Golden AMI Components</h2>
+
               <ul>
-                  <li>GitHub</li>
-                  <li>Jenkins</li>
-                  <li>Ansible</li>
-                  <li>Packer</li>
-                  <li>Amazon Linux 2023</li>
-                  <li>Auto Scaling Group</li>
+                  <li>Apache HTTP Server</li>
+                  <li>Git</li>
+                  <li>Java 17</li>
+                  <li>Python 3</li>
+                  <li>Enterprise Dashboard</li>
+                  <li>KVS Worker Service</li>
               </ul>
-              <p>Golden AMI created automatically using Jenkins Pipeline.</p>
+
+              <p>
+                  This Golden AMI was automatically built using
+                  Jenkins, Packer and Ansible.
+              </p>
+
           </body>
           </html>
+
+###############################################################################
+# SECTION 5 - Deploy Worker Service
+###############################################################################
+
+    - name: Create Worker Installation Directory
+      file:
+        path: /opt/kvs-worker
+        state: directory
+        mode: "0755"
+
+    - name: Copy Worker Application
+      copy:
+        src: worker/worker.py
+        dest: /opt/kvs-worker/worker.py
+        mode: "0755"
+
+    - name: Copy Worker Service Definition
+      copy:
+        src: worker/worker.service
+        dest: /etc/systemd/system/kvs-worker.service
+        mode: "0644"
+
+    - name: Reload systemd daemon
+      systemd:
+        daemon_reload: true
+
+    - name: Enable Worker Service
+      systemd:
+        name: kvs-worker
+        enabled: true
+        state: started
+
+###############################################################################
+# SECTION 6 - Restart Apache
+###############################################################################
 
     - name: Restart Apache
       service:
         name: httpd
         state: restarted
+```
