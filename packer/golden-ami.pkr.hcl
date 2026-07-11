@@ -38,6 +38,15 @@ packer {
 }
 
 ###############################################################################
+# Variables
+###############################################################################
+
+variable "build_number" {
+  type    = string
+  default = "local"
+}
+
+###############################################################################
 # Amazon EBS Builder
 ###############################################################################
 
@@ -67,20 +76,22 @@ source "amazon-ebs" "golden" {
   # Golden AMI Naming
   ####################################################
 
-  ami_name = "kvs-iac-golden-ami-v3-worker-{{timestamp}}"
+  ami_name = "kvs-iac-golden-ami-build-${var.build_number}"
 
   ####################################################
   # Resource Tags
   ####################################################
 
   tags = {
+
     Name          = "kvs-iac-golden-ami"
     Project       = "kvs-iac-project"
     Environment   = "Development"
     CreatedBy     = "Jenkins"
     Owner         = "Vinoth Kumar"
-    Version       = "v3"
+    Version       = "Build-${var.build_number}"
     Configuration = "Apache-Git-Java17-Python3-Worker"
+
   }
 
   ####################################################
@@ -88,8 +99,11 @@ source "amazon-ebs" "golden" {
   ####################################################
 
   run_tags = {
-    Name    = "packer-build-instance"
-    Project = "kvs-iac-project"
+
+    Name          = "packer-build-instance"
+    Project       = "kvs-iac-project"
+    BuildNumber   = var.build_number
+
   }
 
   ####################################################
@@ -99,14 +113,18 @@ source "amazon-ebs" "golden" {
   source_ami_filter {
 
     filters = {
+
       name                = "al2023-ami-2023*"
       root-device-type    = "ebs"
       virtualization-type = "hvm"
       architecture        = "x86_64"
+
     }
 
-    owners      = ["137112412989"]
+    owners = ["137112412989"]
+
     most_recent = true
+
   }
 
 }
@@ -140,7 +158,8 @@ build {
   provisioner "ansible-local" {
 
     playbook_file = "../ansible/playbook.yml"
-    playbook_dir  = "../ansible"
+
+    playbook_dir = "../ansible"
 
   }
 
