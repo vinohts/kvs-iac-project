@@ -62,7 +62,7 @@ source "amazon-ebs" "golden" {
 
   associate_public_ip_address = true
 
-  iam_instance_profile = "EC2SSMRole"
+  iam_instance_profile = "KVSIACProjectRole"
 
   ####################################################
   # EC2 Build Configuration

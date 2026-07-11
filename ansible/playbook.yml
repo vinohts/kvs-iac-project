@@ -55,6 +55,11 @@
         name: python3
         state: present
 
+    - name: Install Python boto3
+      dnf:
+        name: python3-boto3
+        state: present
+
 ###############################################################################
 # SECTION 3 - Configure Apache
 ###############################################################################

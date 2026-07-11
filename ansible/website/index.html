@@ -1,104 +1,262 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KVS IaC Project</title>
+
+    <title>KVS Infrastructure Automation Platform</title>
+
     <link rel="stylesheet" href="style.css">
+
 </head>
+
 <body>
 
 <header>
-    <h1>☁️ KVS IaC - Infrastructure Automation </h1>
-    <p>AWS • Jenkins • GitHub • Packer • Ansible • Auto Scaling</p>
+
+    <h1>☁️ KVS Infrastructure Automation Platform</h1>
+
+    <p>AWS • Jenkins • GitHub • Packer • Ansible • Auto Scaling • Enterprise AMI</p>
+
 </header>
 
 <div class="status">
-    🟢 Infrastructure Status : HEALTHY
+    🟢 Platform Status : HEALTHY
 </div>
 
 <div class="cards">
+
     <div class="card">
-        <h3>Version</h3>
-        <p>2.0</p>
+        <h3>Platform Version</h3>
+        <p>v2.0</p>
     </div>
+
     <div class="card">
         <h3>Environment</h3>
         <p>Development</p>
     </div>
+
     <div class="card">
         <h3>Cloud</h3>
         <p>AWS</p>
     </div>
+
     <div class="card">
         <h3>Region</h3>
         <p>ap-southeast-1</p>
     </div>
+
 </div>
 
 <main>
-    <section>
-        <h2>Infrastructure Components</h2>
-        <div class="tech-grid">
-            <div class="tech">Jenkins</div>
-            <div class="tech">GitHub</div>
-            <div class="tech">Packer</div>
-            <div class="tech">Ansible</div>
-            <div class="tech">Apache</div>
-            <div class="tech">Golden AMI</div>
-            <div class="tech">Launch Template</div>
-            <div class="tech">Auto Scaling</div>
-            <div class="tech">ALB</div>
-            <div class="tech">SSM</div>
-        </div>
-    </section>
 
-    <section>
-        <h2>Application Information</h2>
-        <table>
-            <tr><td>Project</td><td>KVS Infrastructure Automation</td></tr>
-            <tr><td>Operating System</td><td>Amazon Linux 2023</td></tr>
-            <tr><td>Java</td><td>Amazon Corretto 17</td></tr>
-            <tr><td>Web Server</td><td>Apache HTTPD</td></tr>
-            <tr><td>CI/CD</td><td>Jenkins Pipeline</td></tr>
-            <tr><td>Repository</td><td>GitHub</td></tr>
-            <tr><td>Deployment</td><td>Golden AMI</td></tr>
-        </table>
-    </section>
+<section>
 
-    <section>
-        <h2>EC2 Instance Information</h2>
-        <table>
-            <tr><td>Hostname</td><td id="hostname">Loading...</td></tr>
-            <tr><td>Instance ID</td><td id="instanceid">Loading...</td></tr>
-            <tr><td>Private IP</td><td id="privateip">Loading...</td></tr>
-            <tr><td>Availability Zone</td><td id="az">Loading...</td></tr>
-            <tr><td>AMI Version</td><td>Golden AMI Version 2</td></tr>
-            <tr><td>Deployment Time</td><td id="time"></td></tr>
-        </table>
-    </section>
+<h2>Infrastructure Components</h2>
 
-    <section>
-        <h2>Upcoming Project Modules</h2>
-        <div class="future-grid">
-            <div>🚀 Lambda Auto Scaling</div>
-            <div>📊 Database Queue</div>
-            <div>📈 CloudWatch</div>
-            <div>📩 SNS Notifications</div>
-            <div>📦 Terraform</div>
-            <div>☸ Kubernetes</div>
-            <div>🐳 ECS</div>
-            <div>🔄 Blue / Green Deployment</div>
-        </div>
-    </section>
+<div class="tech-grid">
+
+<div class="tech">GitHub</div>
+
+<div class="tech">Jenkins</div>
+
+<div class="tech">Packer</div>
+
+<div class="tech">Ansible</div>
+
+<div class="tech">Apache HTTPD</div>
+
+<div class="tech">Golden AMI</div>
+
+<div class="tech">Launch Template</div>
+
+<div class="tech">Auto Scaling Group</div>
+
+<div class="tech">Application Load Balancer</div>
+
+<div class="tech">SSM</div>
+
+<div class="tech">Python Worker</div>
+
+<div class="tech">Systemd</div>
+
+<div class="tech">IMDSv2</div>
+
+<div class="tech">Instance Refresh</div>
+
+<div class="tech">Enterprise Dashboard</div>
+
+</div>
+
+</section>
+
+<section>
+
+<h2>Application Information</h2>
+
+<table>
+
+<tr><td>Project</td><td>KVS Infrastructure Automation Platform</td></tr>
+
+<tr><td>Operating System</td><td>Amazon Linux 2023</td></tr>
+
+<tr><td>Java Runtime</td><td>Amazon Corretto 17</td></tr>
+
+<tr><td>Python Runtime</td><td>Python 3</td></tr>
+
+<tr><td>Web Server</td><td>Apache HTTPD</td></tr>
+
+<tr><td>Source Control</td><td>GitHub</td></tr>
+
+<tr><td>CI/CD</td><td>Jenkins Pipeline</td></tr>
+
+<tr><td>Image Builder</td><td>Packer</td></tr>
+
+<tr><td>Provisioning</td><td>Ansible</td></tr>
+
+<tr><td>Deployment Model</td><td>Immutable Infrastructure</td></tr>
+
+<tr><td>Golden AMI</td><td>Automated</td></tr>
+
+<tr><td>Launch Template</td><td>Automatically Updated</td></tr>
+
+<tr><td>Auto Scaling Refresh</td><td>Enabled</td></tr>
+
+<tr><td>Worker Service</td><td>Python + Systemd</td></tr>
+
+</table>
+
+</section>
+
+<section>
+
+<h2>Platform Information</h2>
+
+<table>
+
+<tr><td>Platform Version</td><td>v2.0</td></tr>
+
+<tr><td>Release</td><td>Phase 2 Completed</td></tr>
+
+<tr><td>Status</td><td>Production Ready</td></tr>
+
+<tr><td>Architecture</td><td>Immutable Infrastructure</td></tr>
+
+<tr><td>Deployment Strategy</td><td>Golden AMI</td></tr>
+
+<tr><td>Launch Template</td><td>Version Controlled</td></tr>
+
+<tr><td>Instance Refresh</td><td>Automated</td></tr>
+
+<tr><td>Worker Monitoring</td><td>Heartbeat Logging</td></tr>
+
+<tr><td>Metadata Service</td><td>AWS IMDSv2</td></tr>
+
+</table>
+
+</section>
+
+<section>
+
+<h2>Deployment Workflow</h2>
+
+<div class="tech-grid">
+
+<div class="tech">GitHub</div>
+
+<div class="tech">Jenkins</div>
+
+<div class="tech">Packer</div>
+
+<div class="tech">Ansible</div>
+
+<div class="tech">Golden AMI</div>
+
+<div class="tech">Launch Template</div>
+
+<div class="tech">Auto Scaling</div>
+
+<div class="tech">Instance Refresh</div>
+
+<div class="tech">Worker Service</div>
+
+<div class="tech">Enterprise Dashboard</div>
+
+</div>
+
+</section>
+
+<section>
+
+<h2>EC2 Instance Information</h2>
+
+<table>
+
+<tr><td>Hostname</td><td id="hostname">Loading...</td></tr>
+
+<tr><td>Instance ID</td><td id="instanceid">Loading...</td></tr>
+
+<tr><td>Private IP</td><td id="privateip">Loading...</td></tr>
+
+<tr><td>Availability Zone</td><td id="az">Loading...</td></tr>
+
+<tr><td>Golden AMI Version</td><td>v2.0</td></tr>
+
+<tr><td>Deployment Time</td><td id="time"></td></tr>
+
+</table>
+
+</section>
+
+<section>
+
+<h2>Phase 3 Roadmap</h2>
+
+<div class="future-grid">
+
+<div>📨 Amazon SQS</div>
+
+<div>📊 DynamoDB</div>
+
+<div>📈 CloudWatch Metrics</div>
+
+<div>🔔 Amazon SNS</div>
+
+<div>⚡ AWS Lambda</div>
+
+<div>⏰ Amazon EventBridge</div>
+
+<div>📦 Terraform</div>
+
+<div>☸ Amazon EKS</div>
+
+</div>
+
+</section>
+
 </main>
 
 <footer>
-    <h2>Developed by Vinoth Kumar</h2>
-    <p>KVS Infrastructure Automation Project</p>
-    <p>AWS | Jenkins | GitHub | Packer | Ansible</p>
+
+<h2>Developed by Vinoth Kumar</h2>
+
+<p><strong>KVS Infrastructure Automation Platform</strong></p>
+
+<p>Version 2.0 • Phase 2 Completed</p>
+
+<p>Immutable Infrastructure • Golden AMI • Auto Scaling • Worker Service</p>
+
+<p>AWS | Jenkins | GitHub | Packer | Ansible | Python | Apache</p>
+
 </footer>
 
 <script src="app.js"></script>
+
 </body>
+
 </html>
+```
