@@ -3,25 +3,30 @@
 ###############################################################################
 # KVS Infrastructure Automation Worker
 #
-# Purpose : Background Worker Service
+# Purpose : Enterprise Queue Worker
 # Author  : Vinoth Kumar
 #
-# Phase 2
+# Phase 3
 # --------
-# • Starts automatically with systemd
-# • Generates heartbeat logs
-# • Displays EC2 infrastructure telemetry
-# • Uses AWS IMDSv2 (Recommended)
+# • Runs as a systemd service
+# • Polls Amazon SQS
+# • Receives Jobs
+# • Processes Jobs
+# • Deletes Completed Jobs
+# • Writes Heartbeats
 ###############################################################################
 
-import time
-import logging
-import socket
 import os
+import json
+import time
+import socket
+import logging
 import urllib.request
 
+import boto3
+
 ###############################################################################
-# Logging Configuration
+# Logging
 ###############################################################################
 
 logging.basicConfig(
@@ -31,92 +36,142 @@ logging.basicConfig(
 )
 
 ###############################################################################
-# AWS IMDSv2 Functions
+# Configuration
 ###############################################################################
 
-METADATA_URL = "http://169.254.169.254/latest"
+REGION = "ap-southeast-1"
 
+QUEUE_URL = "https://sqs.ap-southeast-1.amazonaws.com/350025135544/kvs-job-queue"
 
-def get_token():
-    """Retrieve IMDSv2 session token"""
-    try:
-        request = urllib.request.Request(
-            METADATA_URL + "/api/token",
-            method="PUT",
-            headers={
-                "X-aws-ec2-metadata-token-ttl-seconds": "21600"
-            }
-        )
+###############################################################################
+# AWS Client
+###############################################################################
 
-        return urllib.request.urlopen(request, timeout=2).read().decode()
+sqs = boto3.client(
+    "sqs",
+    region_name=REGION
+)
 
-    except Exception:
-        return None
+###############################################################################
+# Metadata Helper
+###############################################################################
 
-
-TOKEN = get_token()
-
-
-def get_metadata(path):
-    """Retrieve EC2 metadata using IMDSv2"""
-
-    if TOKEN is None:
-        return "Unavailable"
+def metadata(path):
 
     try:
 
-        request = urllib.request.Request(
-            METADATA_URL + "/meta-data/" + path,
-            headers={
-                "X-aws-ec2-metadata-token": TOKEN
-            }
-        )
-
-        return urllib.request.urlopen(request, timeout=2).read().decode()
+        return urllib.request.urlopen(
+            f"http://169.254.169.254/latest/meta-data/{path}",
+            timeout=2
+        ).read().decode()
 
     except Exception:
+
         return "Unavailable"
 
 ###############################################################################
-# Instance Metadata
+# Instance Information
 ###############################################################################
 
 HOSTNAME = socket.gethostname()
 
-INSTANCE_ID = get_metadata("instance-id")
-AMI_ID = get_metadata("ami-id")
-AZ = get_metadata("placement/availability-zone")
-PUBLIC_IP = get_metadata("public-ipv4")
+INSTANCE_ID = metadata("instance-id")
+
+AMI_ID = metadata("ami-id")
+
+AZ = metadata("placement/availability-zone")
+
+PUBLIC_IP = metadata("public-ipv4")
 
 ###############################################################################
 # Startup Banner
 ###############################################################################
 
-logging.info("==============================================================")
-logging.info("KVS Infrastructure Automation Worker Started")
-logging.info("Hostname            : %s", HOSTNAME)
-logging.info("Instance ID         : %s", INSTANCE_ID)
-logging.info("AMI ID              : %s", AMI_ID)
-logging.info("Availability Zone   : %s", AZ)
-logging.info("Public IP           : %s", PUBLIC_IP)
-logging.info("Worker PID          : %s", os.getpid())
-logging.info("Worker Status       : READY")
-logging.info("==============================================================")
+logging.info("===============================================================")
+logging.info("KVS Queue Worker Started")
+logging.info("Hostname      : %s", HOSTNAME)
+logging.info("Instance ID   : %s", INSTANCE_ID)
+logging.info("AMI           : %s", AMI_ID)
+logging.info("AZ            : %s", AZ)
+logging.info("Public IP     : %s", PUBLIC_IP)
+logging.info("Worker PID    : %s", os.getpid())
+logging.info("Queue         : kvs-job-queue")
+logging.info("Status        : READY")
+logging.info("===============================================================")
 
 ###############################################################################
-# Main Worker Loop
+# Main Loop
 ###############################################################################
 
 heartbeat = 1
 
 while True:
 
-    logging.info(
-        "Heartbeat #%d | Instance=%s | Worker Active | Waiting for Jobs",
-        heartbeat,
-        INSTANCE_ID
-    )
+    try:
 
-    heartbeat += 1
+        response = sqs.receive_message(
 
-    time.sleep(10)
+            QueueUrl=QUEUE_URL,
+
+            MaxNumberOfMessages=1,
+
+            WaitTimeSeconds=20
+
+        )
+
+        messages = response.get("Messages", [])
+
+        if not messages:
+
+            logging.info(
+                "Heartbeat #%s | Queue Empty | Worker Ready",
+                heartbeat
+            )
+
+            heartbeat += 1
+
+            continue
+
+        message = messages[0]
+
+        body = message["Body"]
+
+        receipt = message["ReceiptHandle"]
+
+        message_id = message["MessageId"]
+
+        logging.info("------------------------------------------------------")
+        logging.info("JOB RECEIVED")
+        logging.info("Message ID : %s", message_id)
+        logging.info("Payload    : %s", body)
+
+        #######################################################################
+        # Future Processing Logic
+        #######################################################################
+
+        logging.info("Processing Job...")
+
+        time.sleep(3)
+
+        logging.info("Job Completed Successfully")
+
+        #######################################################################
+        # Delete Message
+        #######################################################################
+
+        sqs.delete_message(
+
+            QueueUrl=QUEUE_URL,
+
+            ReceiptHandle=receipt
+
+        )
+
+        logging.info("Message Deleted")
+        logging.info("------------------------------------------------------")
+
+    except Exception as e:
+
+        logging.error("Worker Exception : %s", str(e))
+
+        time.sleep(10)
