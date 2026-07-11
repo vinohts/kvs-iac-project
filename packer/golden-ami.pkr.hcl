@@ -1,4 +1,3 @@
-```hcl
 ###############################################################################
 # KVS Infrastructure Automation Project
 #
@@ -75,57 +74,39 @@ source "amazon-ebs" "golden" {
   ####################################################
 
   tags = {
-
     Name          = "kvs-iac-golden-ami"
-
     Project       = "kvs-iac-project"
-
     Environment   = "Development"
-
     CreatedBy     = "Jenkins"
-
     Owner         = "Vinoth Kumar"
-
     Version       = "v3"
-
     Configuration = "Apache-Git-Java17-Python3-Worker"
-
   }
 
   ####################################################
-  # Temporary EC2 Build Instance Tags
+  # Temporary Build Instance Tags
   ####################################################
 
   run_tags = {
-
-    Name = "packer-build-instance"
-
+    Name    = "packer-build-instance"
     Project = "kvs-iac-project"
-
   }
 
   ####################################################
-  # Source AMI
+  # Source Amazon Linux 2023 AMI
   ####################################################
 
   source_ami_filter {
 
     filters = {
-
       name                = "al2023-ami-2023*"
-
       root-device-type    = "ebs"
-
       virtualization-type = "hvm"
-
       architecture        = "x86_64"
-
     }
 
-    owners = ["137112412989"]
-
+    owners      = ["137112412989"]
     most_recent = true
-
   }
 
 }
@@ -137,21 +118,17 @@ source "amazon-ebs" "golden" {
 build {
 
   sources = [
-
     "source.amazon-ebs.golden"
-
   ]
 
   ####################################################
-  # Install Ansible inside Build Instance
+  # Install Ansible
   ####################################################
 
   provisioner "shell" {
 
     inline = [
-
       "sudo dnf install -y ansible-core"
-
     ]
 
   }
@@ -163,7 +140,6 @@ build {
   provisioner "ansible-local" {
 
     playbook_file = "../ansible/playbook.yml"
-
     playbook_dir  = "../ansible"
 
   }
@@ -179,4 +155,3 @@ build {
   }
 
 }
-```
