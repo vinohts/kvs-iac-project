@@ -43,6 +43,8 @@ REGION = "ap-southeast-1"
 
 QUEUE_URL = "https://sqs.ap-southeast-1.amazonaws.com/350025135544/kvs-job-queue"
 
+IMDS_TOKEN_TTL_SECONDS = 21600  # 6 hours
+
 ###############################################################################
 # AWS Client
 ###############################################################################
@@ -53,6 +55,50 @@ sqs = boto3.client(
 )
 
 ###############################################################################
+# IMDSv2 Token Cache
+###############################################################################
+
+_imds_token = None
+
+_imds_token_expiry = 0
+
+
+def get_imds_token():
+
+    global _imds_token, _imds_token_expiry
+
+    now = time.time()
+
+    if _imds_token and now < _imds_token_expiry:
+
+        return _imds_token
+
+    try:
+
+        req = urllib.request.Request(
+            "http://169.254.169.254/latest/api/token",
+            method="PUT",
+            headers={"X-aws-ec2-metadata-token-ttl-seconds": str(IMDS_TOKEN_TTL_SECONDS)}
+        )
+
+        token = urllib.request.urlopen(req, timeout=2).read().decode()
+
+        _imds_token = token
+
+        # Refresh a little early so we never call the API with an expired token
+        _imds_token_expiry = now + IMDS_TOKEN_TTL_SECONDS - 60
+
+        return _imds_token
+
+    except Exception:
+
+        _imds_token = None
+
+        _imds_token_expiry = 0
+
+        return None
+
+###############################################################################
 # Metadata Helper
 ###############################################################################
 
@@ -60,10 +106,16 @@ def metadata(path):
 
     try:
 
-        return urllib.request.urlopen(
+        token = get_imds_token()
+
+        headers = {"X-aws-ec2-metadata-token": token} if token else {}
+
+        req = urllib.request.Request(
             f"http://169.254.169.254/latest/meta-data/{path}",
-            timeout=2
-        ).read().decode()
+            headers=headers
+        )
+
+        return urllib.request.urlopen(req, timeout=2).read().decode()
 
     except Exception:
 
