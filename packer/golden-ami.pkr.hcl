@@ -46,6 +46,20 @@ variable "build_number" {
   default = "local"
 }
 
+variable "aws_region" {
+  type    = string
+  default = "ap-southeast-1"
+}
+
+variable "subnet_id" {
+  type    = string
+}
+
+variable "environment" {
+  type    = string
+  default = "Development"
+}
+
 ###############################################################################
 # Amazon EBS Builder
 ###############################################################################
@@ -56,9 +70,9 @@ source "amazon-ebs" "golden" {
   # AWS Configuration
   ####################################################
 
-  region = "ap-southeast-1"
+  region = var.aws_region
 
-  subnet_id = "subnet-088cee33520533800"
+  subnet_id = var.subnet_id
 
   associate_public_ip_address = true
 
@@ -86,7 +100,7 @@ source "amazon-ebs" "golden" {
 
     Name          = "kvs-iac-golden-ami"
     Project       = "kvs-iac-project"
-    Environment   = "Development"
+    Environment   = var.environment
     CreatedBy     = "Jenkins"
     Owner         = "Vinoth Kumar"
     Version       = "Build-${var.build_number}"
@@ -103,6 +117,7 @@ source "amazon-ebs" "golden" {
     Name        = "packer-build-instance"
     Project     = "kvs-iac-project"
     BuildNumber = var.build_number
+    Environment = var.environment
 
   }
 

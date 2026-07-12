@@ -22,13 +22,28 @@ set -e
 # Configuration
 ###############################################################################
 
-REGION="ap-southeast-1"
+# These values are passed from Jenkins
 
-LAUNCH_TEMPLATE_ID="lt-07e3799cf0eb75d78"
+REGION="${AWS_REGION}"
+LAUNCH_TEMPLATE_ID="${LAUNCH_TEMPLATE_ID}"
 
 INSTANCE_PROFILE_NAME="KVSIACProjectRole"
 
 MANIFEST="/mnt/d/kvs-iac-project/packer/manifest.json"
+
+###############################################################################
+# Validate Environment Variables
+###############################################################################
+
+if [ -z "$REGION" ]; then
+    echo "ERROR: AWS_REGION environment variable not set."
+    exit 1
+fi
+
+if [ -z "$LAUNCH_TEMPLATE_ID" ]; then
+    echo "ERROR: LAUNCH_TEMPLATE_ID environment variable not set."
+    exit 1
+fi
 
 ###############################################################################
 # Read Latest AMI
@@ -37,6 +52,9 @@ MANIFEST="/mnt/d/kvs-iac-project/packer/manifest.json"
 echo "======================================================"
 echo "KVS Launch Template Update"
 echo "======================================================"
+
+echo "AWS Region         : $REGION"
+echo "Launch Template ID : $LAUNCH_TEMPLATE_ID"
 
 if [ ! -f "$MANIFEST" ]; then
     echo "ERROR: manifest.json not found."
@@ -105,6 +123,7 @@ echo ""
 echo "======================================================"
 echo "Launch Template Updated Successfully"
 echo "======================================================"
+echo "AWS Region         : $REGION"
 echo "Launch Template ID : $LAUNCH_TEMPLATE_ID"
 echo "Version            : $LATEST_VERSION"
 echo "Golden AMI         : $AMI_ID"

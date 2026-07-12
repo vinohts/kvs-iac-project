@@ -7,19 +7,41 @@
 # Purpose     : Start Auto Scaling Group Instance Refresh
 # Author      : Vinoth Kumar
 #
-# Auto Scaling Group
-# ------------------
-# kvs-iac-project-asg
+# Supports:
+# - Development (Singapore)
+# - Production (Mumbai)
 ###############################################################################
 
 set -e
 
-ASG_NAME="kvs-iac-asg"
+###############################################################################
+# Configuration
+###############################################################################
+
+REGION="${AWS_REGION}"
+ASG_NAME="${ASG_NAME}"
+
+###############################################################################
+# Validate Environment Variables
+###############################################################################
+
+if [ -z "$REGION" ]; then
+    echo "ERROR: AWS_REGION environment variable not set."
+    exit 1
+fi
+
+if [ -z "$ASG_NAME" ]; then
+    echo "ERROR: ASG_NAME environment variable not set."
+    exit 1
+fi
 
 echo "==========================================================="
 echo " KVS Infrastructure Automation"
 echo " Auto Scaling Group Instance Refresh"
 echo "==========================================================="
+
+echo "AWS Region         : $REGION"
+echo "Auto Scaling Group : $ASG_NAME"
 
 ###############################################################
 # Verify AWS CLI Authentication
@@ -40,6 +62,7 @@ echo ""
 echo "Checking Auto Scaling Group..."
 
 ASG_EXISTS=$(aws autoscaling describe-auto-scaling-groups \
+    --region "$REGION" \
     --auto-scaling-group-names "$ASG_NAME" \
     --query "AutoScalingGroups[0].AutoScalingGroupName" \
     --output text)
@@ -59,6 +82,7 @@ echo ""
 echo "Starting Instance Refresh..."
 
 REFRESH_ID=$(aws autoscaling start-instance-refresh \
+    --region "$REGION" \
     --auto-scaling-group-name "$ASG_NAME" \
     --preferences MinHealthyPercentage=100,InstanceWarmup=60 \
     --query "InstanceRefreshId" \
@@ -73,6 +97,7 @@ echo "==========================================================="
 echo " Instance Refresh Started Successfully"
 echo "==========================================================="
 
+echo "AWS Region         : $REGION"
 echo "Auto Scaling Group : $ASG_NAME"
 echo "Refresh ID         : $REFRESH_ID"
 
@@ -80,6 +105,7 @@ echo ""
 echo "Monitor Progress Using:"
 echo ""
 echo "aws autoscaling describe-instance-refreshes \\"
+echo "    --region $REGION \\"
 echo "    --auto-scaling-group-name $ASG_NAME"
 
 echo ""
