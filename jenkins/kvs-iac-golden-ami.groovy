@@ -32,7 +32,6 @@ pipeline {
             steps {
                 git(
                     branch: params.BRANCH,
-                    credentialsId: 'github',
                     url: 'https://github.com/vinohts/kvs-iac-project.git'
                 )
             }

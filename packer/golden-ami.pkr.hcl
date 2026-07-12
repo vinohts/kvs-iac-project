@@ -53,6 +53,7 @@ variable "aws_region" {
 
 variable "subnet_id" {
   type    = string
+  default = "subnet-088cee33520533800"
 }
 
 variable "environment" {
