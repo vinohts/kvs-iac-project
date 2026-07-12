@@ -18,14 +18,6 @@ pipeline {
         timestamps()
     }
 
-    environment {
-        AWS_REGION = ''
-        SUBNET_ID = ''
-        LAUNCH_TEMPLATE_ID = ''
-        ASG_NAME = ''
-        ENVIRONMENT_NAME = ''
-    }
-
     stages {
 
         stage('Checkout Source') {
@@ -40,30 +32,21 @@ pipeline {
         stage('Select Deployment Environment') {
             steps {
                 script {
-                    echo "DEBUG: params.BRANCH = [${params.BRANCH}]"
-                    echo "DEBUG: params.BRANCH class = ${params.BRANCH.getClass().getName()}"
-                    echo "DEBUG: params.BRANCH length = ${params.BRANCH.length()}"
-
                     if (params.BRANCH == "develop") {
-                        echo "DEBUG: MATCHED develop branch"
                         env.AWS_REGION = "ap-southeast-1"
                         env.SUBNET_ID = "subnet-088cee33520533800"
                         env.LAUNCH_TEMPLATE_ID = "lt-07e3799cf0eb75d78"
                         env.ASG_NAME = "kvs-iac-asg"
                         env.ENVIRONMENT_NAME = "Development"
                     } else if (params.BRANCH == "main") {
-                        echo "DEBUG: MATCHED main branch"
                         env.AWS_REGION = "ap-south-1"
                         env.SUBNET_ID = "subnet-0155b7d44ca5d6c98"
                         env.LAUNCH_TEMPLATE_ID = "lt-0edcf35969e3b8ba4"
                         env.ASG_NAME = "kvs-iac-prod-asg"
                         env.ENVIRONMENT_NAME = "Production"
                     } else {
-                        echo "DEBUG: NO MATCH - falling to error"
                         error("Unsupported Branch : ${params.BRANCH}")
                     }
-
-                    echo "DEBUG: after assignment, env.AWS_REGION = [${env.AWS_REGION}]"
 
                     echo "=============================================="
                     echo "Environment : ${env.ENVIRONMENT_NAME}"
