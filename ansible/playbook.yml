@@ -13,6 +13,7 @@
 # - Java 17 (Amazon Corretto)
 # - Python 3
 # - Enterprise Dashboard Website
+# - Enterprise Portal
 # - KVS Worker Service
 ###############################################################################
 
@@ -110,6 +111,7 @@
                   <li>Java 17</li>
                   <li>Python 3</li>
                   <li>Enterprise Dashboard</li>
+                  <li>Enterprise Portal</li>
                   <li>KVS Worker Service</li>
               </ul>
 
@@ -122,7 +124,27 @@
           </html>
 
 ###############################################################################
-# SECTION 5 - Deploy Worker Service
+# SECTION 5 - Deploy Enterprise Portal
+###############################################################################
+
+    - name: Create Apache portal directory
+      file:
+        path: /var/www/html/portal
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Copy portal files
+      copy:
+        src: portal/
+        dest: /var/www/html/portal/
+        owner: root
+        group: root
+        mode: "0644"
+
+###############################################################################
+# SECTION 6 - Deploy Worker Service
 ###############################################################################
 
     - name: Create Worker Installation Directory
@@ -154,7 +176,7 @@
         state: started
 
 ###############################################################################
-# SECTION 6 - Restart Apache
+# SECTION 7 - Restart Apache
 ###############################################################################
 
     - name: Restart Apache
