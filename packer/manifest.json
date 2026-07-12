@@ -134,7 +134,16 @@
       "artifact_id": "ap-southeast-1:ami-0417c551aae8692ec",
       "packer_run_uuid": "c7a42f24-65d6-852b-6e1b-f7f6f7605090",
       "custom_data": null
+    },
+    {
+      "name": "golden",
+      "builder_type": "amazon-ebs",
+      "build_time": 1783882871,
+      "files": null,
+      "artifact_id": "ap-southeast-1:ami-037d31af115dc8b0d",
+      "packer_run_uuid": "19032594-f6e8-9dcb-bed8-d066f071e020",
+      "custom_data": null
     }
   ],
-  "last_run_uuid": "c7a42f24-65d6-852b-6e1b-f7f6f7605090"
+  "last_run_uuid": "19032594-f6e8-9dcb-bed8-d066f071e020"
 }
