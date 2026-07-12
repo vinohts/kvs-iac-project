@@ -9,11 +9,11 @@
 #
 # Phase 2.1
 # ----------
-# • Read latest AMI from manifest.json
-# • Create new Launch Template Version
-# • Attach latest Golden AMI
-# • Attach IAM Instance Profile
-# • Set new version as Default
+# * Read latest AMI from manifest.json
+# * Create new Launch Template Version
+# * Attach latest Golden AMI
+# * Attach IAM Instance Profile
+# * Set new version as Default
 ###############################################################################
 
 set -e
